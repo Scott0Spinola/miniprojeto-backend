@@ -9,26 +9,38 @@ const connection = mysql.createConnection({
   user:"root",
   password:"password",
   database:"mini_projeto",
-})
+});
+
+
 
 app.get('/test', (req, res) =>{
   res.send('It is Working!');
 });
 
-// PARTE A
 
-app.get("/users", (req, res) =>{
-  connection.query("", (err, results, fields){
-    if (err){
-      console.log(err);
-    }
-    else{
-      res.send(results);
-    }
-  })
+
+// PARTE B
+app.get('/product/:id',(req, res) =>{
+  const id = req.params.id;
+  try { 
+    connection.query('SELECT * FROM products WHERE id=?', [id], (err, rows) => {
+      if (err) {throw err;}
+      if(rows === 0){
+        return res.status(404).send("id nao foi encontrado!!!");
+      }
+      const product = rows[0];
+      res.status(200).json({
+        id: product.id,
+        name: product.name,
+        barcode: product.barcode
+      });
+    });
+  } catch (err) {
+    console.error('Erro ao buscar id:', err);
+    res.status(500).send("Erro no servidor!!!!");
+  }
 });
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
