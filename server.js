@@ -24,24 +24,41 @@ app.get('/product/:id',(req, res) =>{
   const id = req.params.id;
   try { 
     connection.query('SELECT * FROM products WHERE id=?', [id], (err, rows) => {
-      if (err) {throw err;}
+      if (err) {
+        return res.status(404).json({message:'errorrr'});
+      }
       if(rows === 0){
-        return res.status(404).send("id nao foi encontrado!!!");
+        return res.status(404).json({message:"id nao foi encontrado!!!"});
       }
       const product = rows[0];
       res.status(200).json({
         id: product.id,
         name: product.name,
-        barcode: product.barcode
+        barcode: product.barcode,
+        department: product.department,
+        review: product.review,
+        weight: product.weight,
+        price: product.price,
+        comment: product.comment
       });
     });
   } catch (err) {
-    console.error('Erro ao buscar id:', err);
-    res.status(500).send("Erro no servidor!!!!");
+    res.status(500).json({message:"Erro no servidor!!!!"});
   }
 });
-
+/*
+app.delete('/product/:id', (req, res) =>{
+  const id = req.params.id;
+  try {
+    connection.query('DELETE FROM products WHERE id=?',[id], (err, result) =>{
+      if(err){
+        return res.status(500).json('')
+      }
+      if ()
+    })
+  }
+})
+*/
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-//gay
