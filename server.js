@@ -65,6 +65,7 @@ app.delete('/product/:id', (req, res) =>{
 app.post('/productSearch', (req, res) =>{
   const keyWord = req.body.word;
   var guardarId = [];
+  
   try{
     connection.query("SELECT id, description FROM products", (err, res) =>{
       for (let index = 0; index < res.length; index++) {
@@ -76,7 +77,7 @@ app.post('/productSearch', (req, res) =>{
       }
     })
     try {
-        connection.query("SELECT * FROM products WHERE ")
+        connection.query("SELECT * FROM products WHERE id=")
     } catch (error) {
       
     }
