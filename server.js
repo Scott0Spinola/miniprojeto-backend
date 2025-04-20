@@ -62,30 +62,37 @@ app.delete('/product/:id', (req, res) =>{
   }
 });
 
-app.post('/productSearch', (req, res) =>{
+app.post('/productSearch', (req, res) => {
   const keyWord = req.body.word;
   var guardarId = [];
-  
-  try{
-    connection.query("SELECT id, description FROM products", (err, res) =>{
-      for (let index = 0; index < res.length; index++) {
-        var element = res[index].description.toLowerCase();
-        console.log(element);
-        if(element.includes(keyWord)){
-          guardarId.push(res[index].id);
-        }
-      }
-    })
-    try {
-        connection.query("SELECT * FROM products WHERE id=")
-    } catch (error) {
-      
-    }
+
+  try {
+      connection.query("SELECT id, description FROM products", (err, results) => {
+          if (err) {
+              return res.status(500).json({ message: "Error retrieving products." });
+          }
+          for (let index = 0; index < results.length; index++) {
+              var element = results[index].description.toLowerCase();
+              console.log(element);
+              if (element.includes(keyWord.toLowerCase())) { 
+                  guardarId.push(results[index].id);
+              }
+          }
+
+          const placeholders = guardarId.map(() => '?').join(',');
+
+          connection.query(`SELECT * FROM products WHERE id IN (${placeholders})`, guardarId, (err, result) => {
+              if (err) {
+                  return res.status(500).json({ message: "Error retrieving products by ID." });
+              }
+              res.send(result);
+              console.log(result);
+          });
+      });
   } catch (err) {
-    res.status(500).json({ message: "Erro no server!!!" });
+      res.status(500).json({ message: "Error in server!!!" });
   }
 });
-
 
 
 
